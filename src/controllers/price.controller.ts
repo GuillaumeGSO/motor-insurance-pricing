@@ -1,18 +1,26 @@
-import { Controller, Get, Query } from '@nestjs/common';
+import { BadRequestException, Controller, Get, Query } from '@nestjs/common';
+import { PremiumQueryDto } from 'src/dto/product.dto';
 import { ProductService } from 'src/services/product.service';
-
 
 @Controller('api/premium')
 export class PriceController {
-    constructor(private readonly productService: ProductService) { }
+  constructor(private readonly productService: ProductService) {}
 
+  @Get()
+  async getPremium(@Query() query: PremiumQueryDto) {
+    const { productCode, location } = query;
+    console.log(productCode, location)
 
-    @Get()
-    async getPremium(@Query('productId') productId: string, @Query('location') location: string) {
-        const product = await this.productService.findPriceByProductAndLocation(productId, location);
-        if (!product) {
-            throw new Error('Product not found for given location');
-        }
-        return { price: product.price };
+    // Call the service with validated query params
+    const product = await this.productService.findPriceByProductAndLocation(
+      productCode,
+      location,
+    );
+
+    if (!product) {
+      throw new BadRequestException('Product not found for given location');
     }
+
+    return { price: product.price };
+  }
 }

@@ -1,0 +1,17 @@
+{
+  "type": "postgres",
+  "host": "127.0.0.1",
+  "port": 5432,
+  "username": "postgres",
+  "password": "mySecretDbPassword!",
+  "database": "motor_insurance_website",
+  "synchronize": false,
+  "entities": [
+    "**/*.entity.js"
+  ],
+  "migrationsTableName": "db_migrations",
+  "migrations": [
+    "src/db/migrations/*.js"
+  ],
+  "ssl": false
+}
