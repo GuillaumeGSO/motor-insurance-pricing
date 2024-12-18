@@ -1,7 +1,7 @@
 import { faker } from '@faker-js/faker';
 import { MigrationInterface, QueryRunner } from 'typeorm';
 
-export class SeedProductsData implements MigrationInterface {
+export class SeedProductsData1515769694459 implements MigrationInterface {
   public async up(queryRunner: QueryRunner): Promise<void> {
     const recordsToInsert = 100; // Number of rows to insert
     const values = [];
@@ -16,10 +16,9 @@ export class SeedProductsData implements MigrationInterface {
         `('${productCode}', '${location}', '${productDesc}', ${price})`,
       );
     }
-
     // Perform bulk insert
     await queryRunner.query(`
-            INSERT INTO products (productCode, location, productDesc, price)
+            INSERT INTO products (productcode, location, productdesc, price)
             VALUES ${values.join(',')}
         `);
   }

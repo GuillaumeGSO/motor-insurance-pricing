@@ -27,10 +27,9 @@ export class ProductService {
   }
 
   async findPriceByProductAndLocation(
-    productCode: string,
+    productcode: string,
     location: string,
   ): Promise<ProductEntity | undefined> {
-    console.log(productCode, location);
-    return this.productRepository.findOne({ where: { productCode, location } });
+    return this.productRepository.findOne({ where: { productcode, location } });
   }
 }

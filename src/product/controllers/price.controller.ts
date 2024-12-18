@@ -9,7 +9,6 @@ export class PriceController {
   @Get()
   async getPremium(@Query() query: PremiumQueryDto) {
     const { productCode, location } = query;
-    console.log(productCode, location);
 
     // Call the service with validated query params
     const product = await this.productService.findPriceByProductAndLocation(
