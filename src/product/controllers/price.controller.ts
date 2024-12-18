@@ -1,6 +1,6 @@
 import { BadRequestException, Controller, Get, Query } from '@nestjs/common';
-import { PremiumQueryDto } from 'src/dto/product.dto';
-import { ProductService } from 'src/services/product.service';
+import { PremiumQueryDto } from 'src/product/dto/product.dto';
+import { ProductService } from 'src/product/services/product.service';
 
 @Controller('api/premium')
 export class PriceController {
@@ -9,7 +9,7 @@ export class PriceController {
   @Get()
   async getPremium(@Query() query: PremiumQueryDto) {
     const { productCode, location } = query;
-    console.log(productCode, location)
+    console.log(productCode, location);
 
     // Call the service with validated query params
     const product = await this.productService.findPriceByProductAndLocation(
