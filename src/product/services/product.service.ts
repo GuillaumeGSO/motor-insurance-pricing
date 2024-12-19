@@ -35,7 +35,6 @@ export class ProductService {
     updateProductDto: UpdateProductDto,
   ): Promise<IProductDto> {
     const { productCode, location, ...updateData } = updateProductDto;
-    console.log(updateProductDto);
     // Ensure the product exists before updating
     const product = await this.productRepository.findOneBy({
       productcode: productCode,
@@ -49,7 +48,6 @@ export class ProductService {
     }
 
     // Perform the update
-    console.log(productCode, location);
     await this.productRepository.update(
       { productcode: productCode, location },
       this.toEntity(updateProductDto),
@@ -72,7 +70,6 @@ export class ProductService {
     const result = await this.productRepository.delete({
       productcode: productCode,
     });
-    console.log(result);
     if (result.affected === 0) {
       throw new NotFoundException(
         `Product with code ${productCode} not found.`,
@@ -88,7 +85,7 @@ export class ProductService {
     const result = await this.productRepository.findOne({
       where: { productcode, location },
     });
-    return {premium: result?.price} as PremiumResponseDto
+    return { premium: result?.price } as PremiumResponseDto;
   }
 
   //Can move that to a specific mapping service later
