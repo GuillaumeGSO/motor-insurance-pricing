@@ -26,7 +26,7 @@ export class ProductService {
       await this.productRepository.save(product);
       return this.toDto(product);
     } catch (error) {
-      // Handle specific database errors or log and rethrow
+      // TODO Handle specific database errors or log and rethrow
       throw new Error('Error creating product: ' + error.message);
     }
   }
@@ -42,7 +42,7 @@ export class ProductService {
     });
 
     if (!product) {
-      throw new Error(
+      throw new NotFoundException(
         `Product with code ${productCode} in location ${location} not found.`,
       );
     }
@@ -60,13 +60,13 @@ export class ProductService {
     });
 
     if (!updatedProduct) {
-      throw new Error(`Failed to fetch the updated product.`);
+      throw new NotFoundException(`Failed to fetch the updated product.`);
     }
 
     return this.toDto(updatedProduct);
   }
 
-  async deleteProduct(productCode: string): Promise<{ success: boolean }> {
+  async deleteProduct(productCode: string): Promise<{ deleted: boolean }> {
     const result = await this.productRepository.delete({
       productcode: productCode,
     });
@@ -75,7 +75,7 @@ export class ProductService {
         `Product with code ${productCode} not found.`,
       );
     }
-    return { success: true };
+    return { deleted: true };
   }
 
   async findPriceByProductAndLocation(
@@ -90,7 +90,10 @@ export class ProductService {
 
   //Can move that to a specific mapping service later
 
-  toEntity(dto: IProductDto): ProductEntity {
+  toEntity(dto: IProductDto): ProductEntity | null {
+    if (!dto) {
+      return null;
+    }
     return {
       productcode: dto.productCode,
       location: dto.location,

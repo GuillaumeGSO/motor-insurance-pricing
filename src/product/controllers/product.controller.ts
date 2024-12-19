@@ -16,7 +16,14 @@ import {
   UpdateProductDto,
 } from '../dto/product.dto';
 import { ProductService } from '../services/product.service';
-import { ApiBody, ApiOperation, ApiParam, ApiQuery, ApiResponse, ApiTags } from '@nestjs/swagger';
+import {
+  ApiBody,
+  ApiOperation,
+  ApiParam,
+  ApiQuery,
+  ApiResponse,
+  ApiTags,
+} from '@nestjs/swagger';
 
 @ApiTags('Product')
 @Controller('product')
@@ -48,16 +55,16 @@ export class ProductController {
     return premium;
   }
   @ApiOperation({ summary: 'Create new product into location' })
-  @ApiBody({type: CreateProductDto})
+  @ApiBody({ type: CreateProductDto })
   @Post()
   async createProduct(@Body() createProductDto: CreateProductDto) {
     return this.productService.createProduct(createProductDto);
   }
 
-
-
-  @ApiOperation({ summary: 'Update price and description for a Product Code at a Location' })
-  @ApiBody({type: UpdateProductDetailsDto})
+  @ApiOperation({
+    summary: 'Update price and description for a Product Code at a Location',
+  })
+  @ApiBody({ type: UpdateProductDetailsDto })
   @ApiQuery({ name: 'productCode', description: 'Targeted product code' })
   @Put()
   async updateProduct(

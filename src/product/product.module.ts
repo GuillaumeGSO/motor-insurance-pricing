@@ -1,4 +1,9 @@
-import { MiddlewareConsumer, Module, NestModule } from '@nestjs/common';
+import {
+  MiddlewareConsumer,
+  Module,
+  NestModule,
+  RequestMethod,
+} from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { ProductController } from './controllers/product.controller';
 import { ProductEntity } from './entities/product.entity';
@@ -15,6 +20,7 @@ export class ProductModule implements NestModule {
   configure(consumer: MiddlewareConsumer) {
     consumer
       .apply(TokenValidationMiddleware, ProductAuthorizationMiddleware)
-      .forRoutes('product');
+      .exclude({ path: 'product', method: RequestMethod.GET })
+      .forRoutes(ProductController);
   }
 }

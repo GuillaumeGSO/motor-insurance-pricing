@@ -21,7 +21,7 @@ export class PremiumQueryDto implements Partial<IProductDto> {
 
 export class PremiumResponseDto {
   @ApiProperty({ description: 'Premium in local currency' })
-  premium: number
+  premium: number;
 }
 
 export class CreateProductDto implements IProductDto {
