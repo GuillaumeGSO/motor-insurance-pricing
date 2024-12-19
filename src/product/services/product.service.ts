@@ -34,7 +34,7 @@ export class ProductService {
   async updateProduct(
     updateProductDto: UpdateProductDto,
   ): Promise<IProductDto> {
-    const { productCode, location, ...updateData } = updateProductDto;
+    const { productCode, location } = updateProductDto;
     // Ensure the product exists before updating
     const product = await this.productRepository.findOneBy({
       productcode: productCode,

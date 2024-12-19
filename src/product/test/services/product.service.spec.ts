@@ -1,8 +1,6 @@
 import { NotFoundException } from '@nestjs/common';
 import { Test, TestingModule } from '@nestjs/testing';
 import { getRepositoryToken } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
-import { ProductService } from '../../services/product.service';
 import {
   CreateProductDto,
   IProductDto,
@@ -10,10 +8,10 @@ import {
   UpdateProductDto,
 } from '../../dto/product.dto';
 import { ProductEntity } from '../../entities/product.entity';
+import { ProductService } from '../../services/product.service';
 
 describe('ProductService', () => {
   let service: ProductService;
-  let repository: Repository<ProductEntity>;
 
   const mockRepository = {
     create: jest.fn(),
@@ -36,9 +34,6 @@ describe('ProductService', () => {
     }).compile();
 
     service = module.get<ProductService>(ProductService);
-    repository = module.get<Repository<ProductEntity>>(
-      getRepositoryToken(ProductEntity),
-    );
   });
 
   describe('create', () => {

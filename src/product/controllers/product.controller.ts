@@ -9,21 +9,19 @@ import {
   Query,
 } from '@nestjs/common';
 import {
-  CreateProductDto,
-  PremiumQueryDto,
-  PremiumResponseDto,
-  UpdateProductDetailsDto,
-  UpdateProductDto,
-} from '../dto/product.dto';
-import { ProductService } from '../services/product.service';
-import {
   ApiBody,
   ApiOperation,
-  ApiParam,
   ApiQuery,
   ApiResponse,
   ApiTags,
 } from '@nestjs/swagger';
+import {
+  CreateProductDto,
+  PremiumQueryDto,
+  PremiumResponseDto,
+  UpdateProductDetailsDto,
+} from '../dto/product.dto';
+import { ProductService } from '../services/product.service';
 
 @ApiTags('Product')
 @Controller('product')

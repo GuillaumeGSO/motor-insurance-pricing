@@ -1,15 +1,14 @@
+import { INestApplication } from '@nestjs/common';
 import { Test, TestingModule } from '@nestjs/testing';
+import * as request from 'supertest';
 import { ProductController } from '../../controllers/product.controller';
-import { ProductService } from '../../services/product.service';
 import {
   CreateProductDto,
   PremiumQueryDto,
   PremiumResponseDto,
   UpdateProductDetailsDto,
 } from '../../dto/product.dto';
-import { BadRequestException } from '@nestjs/common';
-import * as request from 'supertest';
-import { INestApplication } from '@nestjs/common';
+import { ProductService } from '../../services/product.service';
 
 describe('ProductController', () => {
   let app: INestApplication;
