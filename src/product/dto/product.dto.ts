@@ -5,7 +5,8 @@ import {
   IsPositive,
   IsString,
 } from 'class-validator';
-export class PremiumQueryDto {
+
+export class PremiumQueryDto implements Partial<IProductDto> {
   @IsString()
   @IsNotEmpty()
   productCode: string;
@@ -15,7 +16,7 @@ export class PremiumQueryDto {
   location: string;
 }
 
-export class CreateProductDto {
+export class CreateProductDto implements IProductDto {
   @IsString()
   @IsNotEmpty()
   productCode: string;
@@ -33,7 +34,7 @@ export class CreateProductDto {
   price: number;
 }
 
-export class UpdateProductDto {
+export class UpdateProductDto implements IProductDto {
   @IsString()
   @IsNotEmpty()
   productCode: string;
@@ -49,5 +50,12 @@ export class UpdateProductDto {
 
   @IsOptional()
   @IsString()
+  productDesc?: string;
+}
+
+export interface IProductDto {
+  productCode: string;
+  location: string;
+  price?: number;
   productDesc?: string;
 }

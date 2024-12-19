@@ -1,7 +1,11 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-import { CreateProductDto } from '../dto/product.dto';
+import {
+  CreateProductDto,
+  IProductDto,
+  UpdateProductDto,
+} from '../dto/product.dto';
 import { ProductEntity } from '../entities/product.entity';
 
 @Injectable()
@@ -13,17 +17,67 @@ export class ProductService {
 
   async createProduct(
     createProductDto: CreateProductDto,
-  ): Promise<ProductEntity> {
-    const product = this.productRepository.create(createProductDto);
-    return this.productRepository.save(product);
+  ): Promise<IProductDto> {
+    try {
+      const product = this.productRepository.create(
+        this.toEntity(createProductDto),
+      );
+      await this.productRepository.save(product);
+      return this.toDto(product);
+    } catch (error) {
+      // Handle specific database errors or log and rethrow
+      throw new Error('Error creating product: ' + error.message);
+    }
   }
 
-  // async updateProduct(updateProductDto: UpdateProductDto): Promise<ProductEntity> {
-  //     return this.productRepository.update(updateProductDto);
-  // }
+  async updateProduct(
+    updateProductDto: UpdateProductDto,
+  ): Promise<IProductDto> {
+    const { productCode, location, ...updateData } = updateProductDto;
+    console.log(updateProductDto)
+    // Ensure the product exists before updating
+    const product = await this.productRepository.findOneBy({
+      productcode: productCode,
+      location,
+    });
 
-  async deleteProduct(id: string): Promise<void> {
-    await this.productRepository.delete(id);
+    if (!product) {
+      throw new Error(
+        `Product with code ${productCode} in location ${location} not found.`,
+      );
+    }
+
+    // Perform the update
+    console.log(productCode, location)
+    await this.productRepository.update(
+      { productcode: productCode, location },
+      this.toEntity(updateProductDto),
+    );
+
+    // Fetch the updated entity
+    const updatedProduct = await this.productRepository.findOneBy({
+      productcode: productCode,
+      location,
+    });
+
+    if (!updatedProduct) {
+      throw new Error(`Failed to fetch the updated product.`);
+    }
+
+    return this.toDto(updatedProduct);
+  }
+
+  async deleteProduct(productCode: string): Promise<{ success: boolean }> {
+    const result = await this.productRepository.delete({
+      productcode: productCode,
+    });
+    console.log(result)
+    if (result.affected === 0) {
+      throw new NotFoundException(
+        `Product with code ${productCode} not found.`,
+      );
+    }
+    return { success: true };
   }
 
   async findPriceByProductAndLocation(
@@ -31,5 +85,25 @@ export class ProductService {
     location: string,
   ): Promise<ProductEntity | undefined> {
     return this.productRepository.findOne({ where: { productcode, location } });
+  }
+
+  //Can move that to a specific mapping service later
+
+  toEntity(dto: IProductDto): ProductEntity {
+    return {
+      productcode: dto.productCode,
+      location: dto.location,
+      productdesc: dto.productDesc,
+      price: dto.price,
+    } as ProductEntity;
+  }
+
+  toDto(entity: ProductEntity): IProductDto {
+    return {
+      productCode: entity.productcode,
+      location: entity.location,
+      productDesc: entity.productdesc,
+      price: entity.price,
+    } as IProductDto;
   }
 }
