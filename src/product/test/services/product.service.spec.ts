@@ -2,14 +2,14 @@ import { NotFoundException } from '@nestjs/common';
 import { Test, TestingModule } from '@nestjs/testing';
 import { getRepositoryToken } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-import { ProductService } from '../../..//product/services/product.service';
+import { ProductService } from '../../services/product.service';
 import {
   CreateProductDto,
   IProductDto,
   PremiumResponseDto,
   UpdateProductDto,
-} from '../../../product/dto/product.dto';
-import { ProductEntity } from '../../../product/entities/product.entity';
+} from '../../dto/product.dto';
+import { ProductEntity } from '../../entities/product.entity';
 
 describe('ProductService', () => {
   let service: ProductService;
