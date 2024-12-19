@@ -82,6 +82,7 @@
     ],
     "coverageDirectory": "../coverage",
     "testEnvironment": "node",
-    "coveragePathIgnorePatterns": ["src/config/", "app.module.ts", "product.module.ts", "main.ts"]
+    "coveragePathIgnorePatterns": ["src/config/", "app.module.ts", "product.module.ts", "main.ts"],
+    "maxWorkers": 4
   }
 }
