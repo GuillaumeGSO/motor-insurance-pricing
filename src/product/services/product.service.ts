@@ -16,6 +16,10 @@ export class ProductService {
     private readonly productRepository: Repository<ProductEntity>,
   ) {}
 
+  async countProducts(): Promise<number> {
+    return this.productRepository.count();
+  }
+
   async createProduct(
     createProductDto: CreateProductDto,
   ): Promise<IProductDto> {

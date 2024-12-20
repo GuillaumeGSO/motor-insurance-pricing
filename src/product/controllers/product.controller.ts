@@ -28,6 +28,11 @@ import { ProductService } from '../services/product.service';
 export class ProductController {
   constructor(private readonly productService: ProductService) {}
 
+  @Get('count')
+  async countProducts() {
+    return this.productService.countProducts();
+  }
+
   @ApiOperation({ summary: 'Get premium by productCode and Location' })
   @ApiQuery({ name: 'productCode', description: 'Product code' })
   @ApiQuery({ name: 'location', description: 'Location' })
@@ -49,7 +54,14 @@ export class ProductController {
     if (!premium) {
       throw new BadRequestException('Product not found for given location');
     }
-
+    console.log(
+      'premium for product',
+      productCode,
+      'in location',
+      location,
+      'is',
+      premium,
+    );
     return premium;
   }
   @ApiOperation({ summary: 'Create new product into location' })
