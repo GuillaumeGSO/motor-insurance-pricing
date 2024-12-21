@@ -1,6 +1,6 @@
 import { Injectable, Logger, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { QueryFailedError, Repository } from 'typeorm';
 import {
   CreateProductDto,
   IProductDto,
@@ -29,9 +29,11 @@ export class ProductService {
       this.logger.log(`Product created: ${product.productcode}`);
       return this.toDto(product);
     } catch (error) {
-      // TODO Handle specific database errors or log and rethrow
-      this.logger.error('Error creating product: ' + error.message);
-      throw new Error('Error creating product: ' + error.message);
+      if (error instanceof QueryFailedError) {
+        throw new Error('Product already exists in the location.');
+      } else {
+        throw new Error('Error creating product.' + error.message);
+      }
     }
   }
 

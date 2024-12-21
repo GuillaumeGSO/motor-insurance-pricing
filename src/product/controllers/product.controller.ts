@@ -64,7 +64,11 @@ export class ProductController {
     this.logger.log(
       `Creating new product:  ${createProductDto.productCode} at ${createProductDto.location}`,
     );
-    return this.productService.createProduct(createProductDto);
+    try {
+      return await this.productService.createProduct(createProductDto);
+    } catch (error) {
+      throw new BadRequestException('Failed to create product: ' + error.message);
+    }
   }
 
   @ApiOperation({
