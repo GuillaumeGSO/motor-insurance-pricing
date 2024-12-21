@@ -1,7 +1,6 @@
-import { Column, Entity, Index, PrimaryColumn } from 'typeorm';
+import { Column, Entity, PrimaryColumn } from 'typeorm';
 
 @Entity('products')
-@Index('IDX_PRODUCT_PRODUCT_CODE', ['productcode'])
 export class ProductEntity {
   @PrimaryColumn({ type: 'varchar', length: 30 })
   productcode: string;

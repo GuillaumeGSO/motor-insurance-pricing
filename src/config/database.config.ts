@@ -9,7 +9,7 @@ export default registerAs('database', () => ({
   database: process.env.POSTGRES_DATABASE,
   entities: [`${__dirname}/../**/*.entity{.ts,.js}`],
   synchronize: process.env.NODE_ENV === 'DEV',
-  logging: process.env.NODE_ENV === 'DEVxxx',
+  logging: process.env.POSTGRES_LOG === 'true',
   migrations: [`${__dirname}/../../db/migrations/*{.ts,.js}`],
   migrationsTableName: 'migrations',
 }));

@@ -1,4 +1,4 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { Injectable, Logger, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import {
@@ -16,6 +16,8 @@ export class ProductService {
     private readonly productRepository: Repository<ProductEntity>,
   ) {}
 
+  private readonly logger = new Logger(ProductService.name);
+
   async createProduct(
     createProductDto: CreateProductDto,
   ): Promise<IProductDto> {
@@ -27,6 +29,7 @@ export class ProductService {
       return this.toDto(product);
     } catch (error) {
       // TODO Handle specific database errors or log and rethrow
+      this.logger.error('Error creating product: ' + error.message);
       throw new Error('Error creating product: ' + error.message);
     }
   }

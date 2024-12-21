@@ -4,6 +4,7 @@ import {
   Controller,
   Delete,
   Get,
+  Logger,
   Post,
   Put,
   Query,
@@ -49,7 +50,9 @@ export class ProductController {
     if (!premium) {
       throw new BadRequestException('Product not found for given location');
     }
-
+    Logger.verbose(
+      `Premium for product ${productCode} at ${location} is ${premium.premium}`,
+    );
     return premium;
   }
   @ApiOperation({ summary: 'Create new product into location' })
