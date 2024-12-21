@@ -1,99 +1,119 @@
-<p align="center">
-  <a href="http://nestjs.com/" target="blank"><img src="https://nestjs.com/img/logo-small.svg" width="120" alt="Nest Logo" /></a>
-</p>
+# Motor Insurance Pricing API
 
-[circleci-image]: https://img.shields.io/circleci/build/github/nestjs/nest/master?token=abc123def456
-[circleci-url]: https://circleci.com/gh/nestjs/nest
+This project is a NestJS-based API for managing motor insurance pricing. It includes features for creating, updating, retrieving, and deleting product pricing information based on product codes and locations.
 
-  <p align="center">A progressive <a href="http://nodejs.org" target="_blank">Node.js</a> framework for building efficient and scalable server-side applications.</p>
-    <p align="center">
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/v/@nestjs/core.svg" alt="NPM Version" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/l/@nestjs/core.svg" alt="Package License" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/dm/@nestjs/common.svg" alt="NPM Downloads" /></a>
-<a href="https://circleci.com/gh/nestjs/nest" target="_blank"><img src="https://img.shields.io/circleci/build/github/nestjs/nest/master" alt="CircleCI" /></a>
-<a href="https://coveralls.io/github/nestjs/nest?branch=master" target="_blank"><img src="https://coveralls.io/repos/github/nestjs/nest/badge.svg?branch=master#9" alt="Coverage" /></a>
-<a href="https://discord.gg/G7Qnnhy" target="_blank"><img src="https://img.shields.io/badge/discord-online-brightgreen.svg" alt="Discord"/></a>
-<a href="https://opencollective.com/nest#backer" target="_blank"><img src="https://opencollective.com/nest/backers/badge.svg" alt="Backers on Open Collective" /></a>
-<a href="https://opencollective.com/nest#sponsor" target="_blank"><img src="https://opencollective.com/nest/sponsors/badge.svg" alt="Sponsors on Open Collective" /></a>
-  <a href="https://paypal.me/kamilmysliwiec" target="_blank"><img src="https://img.shields.io/badge/Donate-PayPal-ff3f59.svg" alt="Donate us"/></a>
-    <a href="https://opencollective.com/nest#sponsor"  target="_blank"><img src="https://img.shields.io/badge/Support%20us-Open%20Collective-41B883.svg" alt="Support us"></a>
-  <a href="https://twitter.com/nestframework" target="_blank"><img src="https://img.shields.io/twitter/follow/nestframework.svg?style=social&label=Follow" alt="Follow us on Twitter"></a>
-</p>
-  <!--[![Backers on Open Collective](https://opencollective.com/nest/backers/badge.svg)](https://opencollective.com/nest#backer)
-  [![Sponsors on Open Collective](https://opencollective.com/nest/sponsors/badge.svg)](https://opencollective.com/nest#sponsor)-->
+## Table of Contents
+
+- [Description](#description)
+- [Project Setup](#project-setup)
+- [Running the Application](#running-the-application)
+- [Running Tests](#running-tests)
+- [Environment Variables](#environment-variables)
+- [API Documentation](#api-documentation)
+- [Deployment](#deployment)
+- [Support](#support)
+- [License](#license)
 
 ## Description
 
-[Nest](https://github.com/nestjs/nest) framework TypeScript starter repository.
+This API allows users to manage motor insurance pricing information. It includes endpoints for creating, updating, retrieving, and deleting product pricing information based on product codes and locations.
 
-## Project setup
+## Technology Stack
+
+This project uses the following stack:
+
+- **Node.js**: A JavaScript runtime built on Chrome's V8 JavaScript engine, used for building scalable network applications.
+- **NestJS**: A progressive Node.js framework for building efficient, reliable, and scalable server-side applications.
+- **TypeScript**: A strongly typed programming language that builds on JavaScript, giving you better tooling at any scale.
+- **PostgreSQL**: A powerful, open-source object-relational database system.
+- **Docker**: A platform for developing, shipping, and running applications in containers.
+- **Jest**: A delightful JavaScript testing framework with a focus on simplicity.
+- **Swagger**: A tool for documenting APIs, used to generate the API documentation available at `/api`.
+- **Artillery**: A modern, powerful, and easy-to-use load testing toolkit.
+
+## Requirements
+
+Before setting up the project, ensure you have the following installed:
+
+- nodejs
+- npm
+- @nestjs/cli
+- docker
+- artillery (optional)
+
+## Project Setup
+
+To set up the project, follow these steps:
+
+1. Clone the repository:
+   ```bash
+   git clone https://github.com/GuillaumeGSO/motor-insurance-pricing.git
+   cd motor-insurance-pricing
+   ```
+2. Install the dependencies:
+   ```bash
+   npm install
+   ```
+3. Set up the environment variables by copying `.env.sample` to `.env` and filling in the required values:
+   ```bash
+   cp .env.sample .env
+   ```
+
+## Running the Application
+
+To run the application, use the following commands:
+
+### Development mode:
 
 ```bash
-$ npm install
+npm run start:dev:db
+npm run start:dev
 ```
 
-## Compile and run the project
+## Insert sample products / locations
 
 ```bash
-# development
-$ npm run start
-
-# watch mode
-$ npm run start:dev
-
-# production mode
-$ npm run start:prod
+npm run migration:run
 ```
 
-## Run tests
+## Running Tests
+
+To run the tests, use the following commands:
+
+### Unit tests:
 
 ```bash
-# unit tests
-$ npm run test
-
-# e2e tests
-$ npm run test:e2e
-
-# test coverage
-$ npm run test:cov
+npm run test
 ```
 
-## Deployment
-
-When you're ready to deploy your NestJS application to production, there are some key steps you can take to ensure it runs as efficiently as possible. Check out the [deployment documentation](https://docs.nestjs.com/deployment) for more information.
-
-If you are looking for a cloud-based platform to deploy your NestJS application, check out [Mau](https://mau.nestjs.com), our official platform for deploying NestJS applications on AWS. Mau makes deployment straightforward and fast, requiring just a few simple steps:
+### Test coverage:
 
 ```bash
-$ npm install -g mau
-$ mau deploy
+npm run test:cov
 ```
 
-With Mau, you can deploy your application in just a few clicks, allowing you to focus on building features rather than managing infrastructure.
+### Load testing:
 
-## Resources
+```bash
+artillery run test/load-test.yml
+```
 
-Check out a few resources that may come in handy when working with NestJS:
+## Environment Variables
 
-- Visit the [NestJS Documentation](https://docs.nestjs.com) to learn more about the framework.
-- For questions and support, please visit our [Discord channel](https://discord.gg/G7Qnnhy).
-- To dive deeper and get more hands-on experience, check out our official video [courses](https://courses.nestjs.com/).
-- Deploy your application to AWS with the help of [NestJS Mau](https://mau.nestjs.com) in just a few clicks.
-- Visualize your application graph and interact with the NestJS application in real-time using [NestJS Devtools](https://devtools.nestjs.com).
-- Need help with your project (part-time to full-time)? Check out our official [enterprise support](https://enterprise.nestjs.com).
-- To stay in the loop and get updates, follow us on [X](https://x.com/nestframework) and [LinkedIn](https://linkedin.com/company/nestjs).
-- Looking for a job, or have a job to offer? Check out our official [Jobs board](https://jobs.nestjs.com).
+The application uses the following environment variables:
 
-## Support
+- `POSTGRES_HOST`: The host of the PostgreSQL database.
+- `POSTGRES_PORT`: The port of the PostgreSQL database.
+- `POSTGRES_USER`: The username for the PostgreSQL database.
+- `POSTGRES_PASSWORD`: The password for the PostgreSQL database.
+- `POSTGRES_DATABASE`: The name of the PostgreSQL database.
+- `PORT`: The port on which the application will run.
+- `NODE_ENV`: The environment in which the application is running (e.g., DEV, PROD).
+- `RUN_MIGRATIONS`: Whether to run database migrations on startup.
+- `API_TOKEN`: The API token for authentication.
+- `LOG_LEVELS`: The log levels for the application.
 
-Nest is an MIT-licensed open source project. It can grow thanks to the sponsors and support by the amazing backers. If you'd like to join them, please [read more here](https://docs.nestjs.com/support).
+## API Documentation
 
-## Stay in touch
-
-- Author - [Kamil Myśliwiec](https://twitter.com/kammysliwiec)
-- Website - [https://nestjs.com](https://nestjs.com/)
-- Twitter - [@nestframework](https://twitter.com/nestframework)
-
-## License
-
-Nest is [MIT licensed](https://github.com/nestjs/nest/blob/master/LICENSE).
+The API documentation is available at `/api` when the application is running. It provides detailed information about the available endpoints and their usage.
+http://localhost:3000/api
