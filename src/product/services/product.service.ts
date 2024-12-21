@@ -16,7 +16,7 @@ export class ProductService {
     private readonly productRepository: Repository<ProductEntity>,
   ) {}
 
-  private readonly logger = new Logger(ProductService.name);
+  logger = new Logger(ProductService.name);
 
   async createProduct(
     createProductDto: CreateProductDto,
@@ -26,6 +26,7 @@ export class ProductService {
         this.toEntity(createProductDto),
       );
       await this.productRepository.save(product);
+      this.logger.log(`Product created: ${product.productcode}`);
       return this.toDto(product);
     } catch (error) {
       // TODO Handle specific database errors or log and rethrow

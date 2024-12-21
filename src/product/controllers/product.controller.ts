@@ -29,6 +29,8 @@ import { ProductService } from '../services/product.service';
 export class ProductController {
   constructor(private readonly productService: ProductService) {}
 
+  logger = new Logger(ProductController.name);
+
   @ApiOperation({ summary: 'Get premium by productCode and Location' })
   @ApiQuery({ name: 'productCode', description: 'Product code' })
   @ApiQuery({ name: 'location', description: 'Location' })
@@ -50,7 +52,7 @@ export class ProductController {
     if (!premium) {
       throw new BadRequestException('Product not found for given location');
     }
-    Logger.verbose(
+    this.logger.verbose(
       `Premium for product ${productCode} at ${location} is ${premium.premium}`,
     );
     return premium;
@@ -59,6 +61,9 @@ export class ProductController {
   @ApiBody({ type: CreateProductDto })
   @Post()
   async createProduct(@Body() createProductDto: CreateProductDto) {
+    this.logger.log(
+      `Creating new product:  ${createProductDto.productCode} at ${createProductDto.location}`,
+    );
     return this.productService.createProduct(createProductDto);
   }
 

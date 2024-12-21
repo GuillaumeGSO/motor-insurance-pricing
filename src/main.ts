@@ -13,7 +13,6 @@ async function bootstrap() {
   const logger = new Logger('MotorPricing');
   logger.log('Application is starting...');
   logger.log(`Log levels set to: ${logLevels.join(', ')}`);
-  console.log(logLevels)
   Logger.overrideLogger(logLevels);
   app.useLogger(logLevels);
 
