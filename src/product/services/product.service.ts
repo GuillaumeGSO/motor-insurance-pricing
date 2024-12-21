@@ -32,7 +32,7 @@ export class ProductService {
       if (error instanceof QueryFailedError) {
         throw new Error('Product already exists in the location.');
       } else {
-        throw new Error('Error creating product.' + error.message);
+        throw new Error('Error creating product: ' + error.message);
       }
     }
   }

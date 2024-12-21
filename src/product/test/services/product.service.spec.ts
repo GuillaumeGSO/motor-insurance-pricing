@@ -46,6 +46,7 @@ describe('ProductService', () => {
       };
 
       const productEntity: ProductEntity = {
+        id: 1,
         productcode: createProductDto.productCode,
         productdesc: createProductDto.productDesc,
         ...createProductDto,
@@ -112,6 +113,7 @@ describe('ProductService', () => {
       };
 
       const existingProduct: ProductEntity = {
+        id: 1,
         productcode: '1000',
         location: 'Malaysia',
         productdesc: 'Sedan',
@@ -119,6 +121,7 @@ describe('ProductService', () => {
       };
 
       const updatedProduct: ProductEntity = {
+        id: 1,
         productcode: '1000',
         location: 'Malaysia',
         productdesc: 'Updated Sedan',
