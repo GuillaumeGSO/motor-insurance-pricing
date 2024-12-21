@@ -23,11 +23,13 @@ I've created a branch (WIP) with a full Docker Compose approach: https://github.
 
 ### A few comments about the project:
 
-- One table in the collection: the table is not optimal due to redundancy of product descriptions. Since the main API only returns premium:price, the product description could have been located in a separate table. However, the API to add/update/delete would have been more complex.
+- The database contains one table, which is not optimal due to redundancy of product descriptions. Since the main API only returns premium:price, the product description could have been located in a separate table. However, this would have made the API to add/update/delete more complex.
 - I noticed that for the update route, we chose to use a query parameter for the productCode, but location is in the body. I've assumed that was a design choice.
 - The main search feature uses both product code and location, so the only required index is on these fields.
 - Separation of concerns: controllers only know about DTOs, services manage DTO to entity conversion, and the built-in repository from TypeORM handles database interactions.
 - Ensure it is fast: I used Artillery load testing to ensure that the API is fast and can handle heavy loads.
+- All services and controller are fully tested using Jest and mocking dependencies.
+  Note that config and modules files are excluded from the coverage calculation.
 - Middleware created to handle token validation and admin access.
 - Set up a logger (Nest).
 - Created an interceptor for error handling.
@@ -37,9 +39,8 @@ Complementary approaches (not implemented):
 - NestJS built-in cache
 - Redis cache
 - PostgreSQL cache
-- Fastify for faster/compressed/http2 compatible (note that the project payload are very light)
+- Fastify for faster/compressed/http2 compatible (note that the project payloads are very light)
 - Horizontal scaling using a load balancer
--
 
 ### Project requirements
 
@@ -51,7 +52,8 @@ Complementary approaches (not implemented):
   - A token (classical `Authorization Bearer...`) must be set for all admin routes (other than GET).
   - A role "admin" must be set in the `x-role` header.
 - A branch is created (WIP) with a deployment ready approach
-- API is able to handle a lot of concurrent access out of the box. This
+- API is able to handle a lot of concurrent access out of the box, see [load testing](#load-testing)
+ - Unit test coverage is close to 100% with config and modules files excluded, see [unit testing](#test-coverage)
 
 ## Technology Stack
 
@@ -127,7 +129,7 @@ npm run test
 npm run test:cov
 ```
 
-### Load testing:
+### Load testing
 
 ```bash
 artillery run test/load-test.yml
@@ -155,7 +157,7 @@ http://localhost:3000/api
 
 Note : you can use swagger interface to insert data into the DB.
 
-### Api call sample
+### API Call Examples
 
 #### Create one product
 
