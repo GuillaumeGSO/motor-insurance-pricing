@@ -67,7 +67,9 @@ export class ProductController {
     try {
       return await this.productService.createProduct(createProductDto);
     } catch (error) {
-      throw new BadRequestException('Failed to create product: ' + error.message);
+      throw new BadRequestException(
+        'Failed to create product: ' + error.message,
+      );
     }
   }
 

@@ -1,20 +1,32 @@
-import { Injectable, NestMiddleware } from '@nestjs/common';
+import { Injectable, NestMiddleware, UnauthorizedException } from '@nestjs/common';
+import * as jwt from 'jsonwebtoken';
+
 import { NextFunction, Request, Response } from 'express';
 
 @Injectable()
 export class TokenValidationMiddleware implements NestMiddleware {
   use(req: Request, res: Response, next: NextFunction) {
-    const authHeader = req.headers['authorization'];
-    if (!authHeader || !authHeader.startsWith('Bearer ')) {
-      return res.status(403).json({ message: 'Invalid authorization header' });
+    const authHeader = req.headers.authorization;
+    if (!authHeader) {
+      throw new UnauthorizedException('Authorization header is missing');
     }
 
     const token = authHeader.split(' ')[1];
-
-    const isValidToken = token === process.env.API_TOKEN;
-    if (!isValidToken) {
-      return res.status(403).json({ message: 'Invalid token' });
+    if (!token) {
+      throw new UnauthorizedException('Token is missing');
     }
-    next();
+
+    try {
+      const decoded = jwt.verify(token,process.env.JWT_SECRET);
+      
+      if (typeof decoded !== 'string' && 'roles' in decoded) {
+        req.headers['roles'] = decoded.roles;
+      } else {
+        throw new UnauthorizedException('Invalid token payload');
+      }
+      next();
+    } catch (error) {
+     throw new UnauthorizedException('Invalid token');
+    }
   }
 }

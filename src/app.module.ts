@@ -1,6 +1,7 @@
 import { Module } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
+import { AuthModule } from './auth/auth.module';
 import { AppConfig, DatabaseConfig } from './config';
 import { ProductModule } from './product/product.module';
 
@@ -19,6 +20,7 @@ import { ProductModule } from './product/product.module';
       inject: [ConfigService],
     }),
     ProductModule,
+    AuthModule,
   ],
   controllers: [],
   providers: [],
