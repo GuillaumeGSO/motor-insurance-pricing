@@ -6,7 +6,7 @@ import { Role, UserDto } from './auth.dto';
 export class AuthService {
   jwtOptions: JwtModuleOptions;
 
-  //simulate user/role database thqt should be in its own service/repository
+  //simulate user/role database that should be in its own service/repository
   users = [
     {
       username: 'admin',

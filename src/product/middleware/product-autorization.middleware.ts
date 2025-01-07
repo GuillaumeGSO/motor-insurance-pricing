@@ -1,6 +1,10 @@
-import { Injectable, NestMiddleware, UnauthorizedException } from '@nestjs/common';
+import {
+  Injectable,
+  NestMiddleware,
+  UnauthorizedException,
+} from '@nestjs/common';
 import { NextFunction, Request, Response } from 'express';
-import { Role } from 'src/auth/auth.dto';
+import { Role } from '../../auth/auth.dto';
 
 @Injectable()
 export class ProductAuthorizationMiddleware implements NestMiddleware {

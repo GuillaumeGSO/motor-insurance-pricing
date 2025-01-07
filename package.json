@@ -91,6 +91,7 @@
       "src/config/",
       "app.module.ts",
       "product.module.ts",
+      "auth.module.ts",
       "main.ts"
     ],
     "maxWorkers": 4

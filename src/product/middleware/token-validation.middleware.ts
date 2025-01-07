@@ -1,4 +1,8 @@
-import { Injectable, NestMiddleware, UnauthorizedException } from '@nestjs/common';
+import {
+  Injectable,
+  NestMiddleware,
+  UnauthorizedException,
+} from '@nestjs/common';
 import * as jwt from 'jsonwebtoken';
 
 import { NextFunction, Request, Response } from 'express';
@@ -13,12 +17,12 @@ export class TokenValidationMiddleware implements NestMiddleware {
 
     const token = authHeader.split(' ')[1];
     if (!token) {
-      throw new UnauthorizedException('Token is missing');
+      throw new UnauthorizedException('Token not found');
     }
 
     try {
-      const decoded = jwt.verify(token,process.env.JWT_SECRET);
-      
+      const decoded = jwt.verify(token, process.env.JWT_SECRET);
+
       if (typeof decoded !== 'string' && 'roles' in decoded) {
         req.headers['roles'] = decoded.roles;
       } else {
@@ -26,7 +30,8 @@ export class TokenValidationMiddleware implements NestMiddleware {
       }
       next();
     } catch (error) {
-     throw new UnauthorizedException('Invalid token');
+      throw new UnauthorizedException(error.message
+      );
     }
   }
 }
