@@ -27,6 +27,8 @@ I've created a branch (WIP) with a full Docker Compose approach: https://github.
 - I noticed that for the update route, we chose to use a query parameter for the productCode, but location is in the body. I've assumed that was a design choice.
 - The main search feature uses both product code and location, so the only required index is on these fields.
 - Separation of concerns: controllers only know about DTOs, services manage DTO to entity conversion, and the built-in repository from TypeORM handles database interactions.
+- The authentication service provides a JWT token that contains a role used to authorize routes.
+- Token handling and authorization are handled by middleware
 - Ensure it is fast: I used Artillery load testing to ensure that the API is fast and can handle heavy loads.
 - All services and controller are fully tested using Jest and mocking dependencies.
   Note that config and modules files are excluded from the coverage calculation.
@@ -53,7 +55,7 @@ Complementary approaches (not implemented):
   - A role "admin" must be set in the `x-role` header.
 - A branch is created (WIP) with a deployment ready approach
 - API is able to handle a lot of concurrent access out of the box, see [load testing](#load-testing)
- - Unit test coverage is close to 100% with config and modules files excluded, see [unit testing](#test-coverage)
+- Unit test coverage is close to 100% with config and modules files excluded, see [unit testing](#test-coverage)
 
 ## Technology Stack
 
@@ -147,7 +149,7 @@ The application uses the following environment variables:
 - `PORT`: The port on which the application will run.
 - `NODE_ENV`: The environment in which the application is running (e.g., DEV, PROD).
 - `RUN_MIGRATIONS`: Whether to run database migrations on startup.
-- `API_TOKEN`: The API token for authentication.
+- `JWT_SECRET`: Key to encode JWT Token
 - `LOG_LEVELS`: The log levels for the application.
 
 ## API Documentation
@@ -159,9 +161,21 @@ Note : you can use swagger interface to insert data into the DB.
 
 ### API Call Examples
 
+In the `tools` folder, there is a Postman collection to use all the routes.
+
+#### Authenticate
+
+```bash
+curl -X POST http://localhost:3000/auth/login \
+-H "Content-Type: application/json" \
+-d '{"username": "admin", "password": "admin"}'
+```
+
+This provides a JWT token that needs to be used for all admin routes
+
 #### Create one product
 
-```
+```bash
 curl -X POST http://localhost:3000/product \
 -H "Content-Type: application/json" \
 -H "Authorization: Bearer <your_token>" \
@@ -180,7 +194,6 @@ curl -X POST http://localhost:3000/product \
 curl -X PUT http://localhost:3000/product?productCode=1000 \
 -H "Content-Type: application/json" \
 -H "Authorization: Bearer <your_token>" \
--H "x-role: admin" \
 -d '{
   "productDesc": "Sedan 4WD",
   "location": "Malaysia",
@@ -188,16 +201,17 @@ curl -X PUT http://localhost:3000/product?productCode=1000 \
 }'
 ```
 
-#### Get premium
-
-```bash
-curl "http://localhost:3000/product?productCode=1000&location=Malaysia"
-```
-
 #### Delete one product
 
 ```bash
 curl -X DELETE "http://localhost:3000/product?productCode=1000" \
 -H "Authorization: Bearer <your_token>" \
--H "x-role: admin"
+```
+
+#### Get premium
+
+This is a public route, no authorization required
+
+```bash
+curl "http://localhost:3000/product?productCode=1000&location=Malaysia"
 ```
