@@ -146,7 +146,7 @@ Generate the report
 artillery run report report-light.json
 ```
 
-View report : open `report.json.html`
+View report : open `report-light.json.html`
 
 ## Environment Variables
 
