@@ -1,0 +1,39 @@
+config:
+  target: 'http://localhost:3000'
+  phases:
+    # Ramp-up phase
+    - duration: 60
+      arrivalRate: 200
+      rampTo: 1200
+      name: 'Warm up'
+    # Steady-state phase
+    - duration: 60
+      arrivalRate: 1200
+      name: 'Steady'
+    # Slow-down phase
+    - duration: 60
+      arrivalRate: 1200
+      rampTo: 0
+      name: 'Cool down'
+scenarios:
+  - flow:
+      - get:
+          url: '/product?productCode={{ productCode }}&location={{ location }}'
+          headers:
+            Content-Type: 'application/json'
+variables:
+  productCode:
+    ['1000', '2000', '3000', '4000', '4000', '5000', '7000', '8000', '9000']
+  location:
+    [
+      'Brunei',
+      'Cambodia',
+      'Indonesia',
+      'Laos',
+      'Malaysia',
+      'Myanmar',
+      'Philippines',
+      'Singapore',
+      'Thailand',
+      'Vietnam',
+    ]

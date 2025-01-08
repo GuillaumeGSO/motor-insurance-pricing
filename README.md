@@ -133,9 +133,20 @@ npm run test:cov
 
 ### Load testing
 
+Run the load test
+
 ```bash
-artillery run test/load-test.yml
+artillery run -o report-light.json test/load-test-light.yml
+
 ```
+
+Generate the report
+
+```bash
+artillery run report report-light.json
+```
+
+View report : open `report.json.html`
 
 ## Environment Variables
 
