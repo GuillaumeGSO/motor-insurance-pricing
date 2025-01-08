@@ -16,7 +16,7 @@ import { ProductService } from './services/product.service';
   imports: [
     TypeOrmModule.forFeature([ProductEntity]),
     CacheModule.register({
-      ttl: 5,
+      ttl: 10*1000,
       max: 100,
     }),
   ],

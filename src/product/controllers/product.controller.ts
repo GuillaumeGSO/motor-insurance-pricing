@@ -41,8 +41,8 @@ export class ProductController {
     description: 'Product retrieved successfully',
     type: PremiumResponseDto,
   })
-  @UseInterceptors(LoggingCacheInterceptor)
   @Get()
+  @UseInterceptors(LoggingCacheInterceptor)
   async getPremium(@Query() query: PremiumQueryDto) {
     const { productCode, location } = query;
 
