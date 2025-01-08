@@ -1,3 +1,4 @@
+import { CacheModule } from '@nestjs/cache-manager';
 import {
   MiddlewareConsumer,
   Module,
@@ -12,7 +13,13 @@ import { TokenValidationMiddleware } from './middleware/token-validation.middlew
 import { ProductService } from './services/product.service';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([ProductEntity])],
+  imports: [
+    TypeOrmModule.forFeature([ProductEntity]),
+    CacheModule.register({
+      ttl: 10*1000,
+      max: 100,
+    }),
+  ],
   providers: [ProductService],
   controllers: [ProductController],
 })

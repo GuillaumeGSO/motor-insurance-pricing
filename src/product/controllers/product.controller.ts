@@ -1,3 +1,4 @@
+import { CacheInterceptor } from '@nestjs/cache-manager';
 import {
   BadRequestException,
   Body,
@@ -8,6 +9,7 @@ import {
   Post,
   Put,
   Query,
+  UseInterceptors,
 } from '@nestjs/common';
 import {
   ApiBody,
@@ -40,6 +42,7 @@ export class ProductController {
     type: PremiumResponseDto,
   })
   @Get()
+  @UseInterceptors(CacheInterceptor)
   async getPremium(@Query() query: PremiumQueryDto) {
     const { productCode, location } = query;
 

@@ -3,37 +3,44 @@ config:
   phases:
     # Ramp-up phase
     - duration: 60
-      arrivalRate: 50
-      rampTo: 300
+      arrivalRate: 20
+      rampTo: 120
       name: 'Warm up'
     # Steady-state phase
     - duration: 60
-      arrivalRate: 300
+      arrivalRate: 120
       name: 'Steady'
     # Slow-down phase
     - duration: 60
-      arrivalRate: 300
+      arrivalRate: 120
       rampTo: 0
       name: 'Cool down'
+  variables:
+    productcode:
+      - '1000'
+      - '2000'
+      - '3000'
+      - '4000'
+      - '4000'
+      - '5000'
+      - '7000'
+      - '8000'
+      - '9000'
+    location:
+      - 'Brunei'
+      - 'Cambodia'
+      - 'Indonesia'
+      - 'Laos'
+      - 'Malaysia'
+      - 'Myanmar'
+      - 'Philippines'
+      - 'Singapore'
+      - 'Thailand'
+      - 'Vietnam'
 scenarios:
   - flow:
       - get:
-          url: '/product?productCode={{ productCode }}&location={{ location }}'
+          url: '/product?productCode={{ productcode }}&location={{ location }}'
+
           headers:
             Content-Type: 'application/json'
-variables:
-  productCode:
-    ['1000', '2000', '3000', '4000', '4000', '5000', '7000', '8000', '9000']
-  location:
-    [
-      'Brunei',
-      'Cambodia',
-      'Indonesia',
-      'Laos',
-      'Malaysia',
-      'Myanmar',
-      'Philippines',
-      'Singapore',
-      'Thailand',
-      'Vietnam',
-    ]
