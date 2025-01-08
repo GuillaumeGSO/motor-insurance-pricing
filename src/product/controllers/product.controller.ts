@@ -8,6 +8,7 @@ import {
   Post,
   Put,
   Query,
+  UseInterceptors,
 } from '@nestjs/common';
 import {
   ApiBody,
@@ -23,6 +24,7 @@ import {
   UpdateProductDetailsDto,
 } from '../dto/product.dto';
 import { ProductService } from '../services/product.service';
+import { CacheInterceptor } from '@nestjs/cache-manager';
 
 @ApiTags('Product')
 @Controller('product')
@@ -39,6 +41,7 @@ export class ProductController {
     description: 'Product retrieved successfully',
     type: PremiumResponseDto,
   })
+  @UseInterceptors(CacheInterceptor)
   @Get()
   async getPremium(@Query() query: PremiumQueryDto) {
     const { productCode, location } = query;
