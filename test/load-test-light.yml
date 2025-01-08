@@ -2,16 +2,16 @@ config:
   target: 'http://localhost:3000'
   phases:
     # Ramp-up phase
-    - duration: 60
-      arrivalRate: 20
+    - duration: 30
+      arrivalRate: 40
       rampTo: 120
       name: 'Warm up'
     # Steady-state phase
-    - duration: 60
+    - duration: 120
       arrivalRate: 120
       name: 'Steady'
     # Slow-down phase
-    - duration: 60
+    - duration: 10
       arrivalRate: 120
       rampTo: 0
       name: 'Cool down'
