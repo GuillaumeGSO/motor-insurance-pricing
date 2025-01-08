@@ -12,7 +12,7 @@ config:
       name: 'Steady'
     # Slow-down phase
     - duration: 60
-      arrivalRate: 50
+      arrivalRate: 300
       rampTo: 0
       name: 'Cool down'
 scenarios:
