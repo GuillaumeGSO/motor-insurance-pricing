@@ -1,76 +1,82 @@
+import { UnauthorizedException } from '@nestjs/common';
 import { Request, Response } from 'express';
 import { ProductAuthorizationMiddleware } from '../../middleware/product-autorization.middleware';
 
 describe('ProductAuthorizationMiddleware', () => {
   let middleware: ProductAuthorizationMiddleware;
+  let res: Response;
 
   beforeEach(() => {
     middleware = new ProductAuthorizationMiddleware();
+    res = {} as Response;
   });
 
-  it('should call next() if x-role header is admin', () => {
-    // Mock request, response, and next function
+  it('should pass when roles contains only admin', () => {
+    // Given
     const req = {
       headers: {
-        'x-role': 'admin',
+        roles: ['admin'],
       },
     } as unknown as Request;
 
-    const res = {} as Response;
-    const next = jest.fn(); // Mock next function
+    const next = jest.fn();
 
-    // Execute middleware
+    // When
     middleware.use(req, res, next);
 
-    // Assertions
+    // Then
     expect(next).toHaveBeenCalled();
   });
 
-  it('should return 403 if x-role header is not admin', () => {
-    // Mock request, response, and next function
+  it('should pass when roles contains admin', () => {
     const req = {
       headers: {
-        'x-role': 'user',
+        roles: ['user', 'admin'],
       },
     } as unknown as Request;
 
-    const res = {
-      status: jest.fn().mockReturnThis(),
-      json: jest.fn(),
-    } as unknown as Response;
     const next = jest.fn();
 
-    // Execute middleware
     middleware.use(req, res, next);
 
-    // Assertions
-    expect(res.status).toHaveBeenCalledWith(403);
-    expect(res.json).toHaveBeenCalledWith({
-      message: 'Unauthorized access to products',
-    });
+    expect(next).toHaveBeenCalled();
+  });
+
+  it('should fail when roles is not admin', () => {
+    const req = {
+      headers: {
+        roles: 'user',
+      },
+    } as unknown as Request;
+
+    const next = jest.fn();
+
+    try {
+      middleware.use(req, res, next);
+      fail('Should have thrown an error');
+    } catch (error) {
+      expect(error).toBeInstanceOf(UnauthorizedException);
+      expect(error.message).toBe('Unauthorized access to products');
+    }
+
     expect(next).not.toHaveBeenCalled();
   });
 
-  it('should return 403 if x-role header is missing', () => {
-    // Mock request, response, and next function
+  it('should fail when no roles is set', () => {
     const req = {
       headers: {},
     } as Request;
 
-    const res = {
-      status: jest.fn().mockReturnThis(),
-      json: jest.fn(),
-    } as unknown as Response;
     const next = jest.fn();
 
-    // Execute middleware
-    middleware.use(req, res, next);
+    try {
+      middleware.use(req, res, next);
+      fail('Should have thrown an error');
+    } catch (error) {
+      expect(error).toBeInstanceOf(UnauthorizedException);
+      expect(error.message).toBe('Unauthorized access to products');
+    }
 
-    // Assertions
-    expect(res.status).toHaveBeenCalledWith(403);
-    expect(res.json).toHaveBeenCalledWith({
-      message: 'Unauthorized access to products',
-    });
     expect(next).not.toHaveBeenCalled();
   });
 });

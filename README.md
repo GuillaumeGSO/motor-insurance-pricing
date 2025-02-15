@@ -1,99 +1,228 @@
-<p align="center">
-  <a href="http://nestjs.com/" target="blank"><img src="https://nestjs.com/img/logo-small.svg" width="120" alt="Nest Logo" /></a>
-</p>
+# Motor Insurance Pricing API
 
-[circleci-image]: https://img.shields.io/circleci/build/github/nestjs/nest/master?token=abc123def456
-[circleci-url]: https://circleci.com/gh/nestjs/nest
+This project is a NestJS-based API for managing motor insurance pricing. It includes features for creating, updating, retrieving, and deleting product pricing information based on product codes and locations.
 
-  <p align="center">A progressive <a href="http://nodejs.org" target="_blank">Node.js</a> framework for building efficient and scalable server-side applications.</p>
-    <p align="center">
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/v/@nestjs/core.svg" alt="NPM Version" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/l/@nestjs/core.svg" alt="Package License" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/dm/@nestjs/common.svg" alt="NPM Downloads" /></a>
-<a href="https://circleci.com/gh/nestjs/nest" target="_blank"><img src="https://img.shields.io/circleci/build/github/nestjs/nest/master" alt="CircleCI" /></a>
-<a href="https://coveralls.io/github/nestjs/nest?branch=master" target="_blank"><img src="https://coveralls.io/repos/github/nestjs/nest/badge.svg?branch=master#9" alt="Coverage" /></a>
-<a href="https://discord.gg/G7Qnnhy" target="_blank"><img src="https://img.shields.io/badge/discord-online-brightgreen.svg" alt="Discord"/></a>
-<a href="https://opencollective.com/nest#backer" target="_blank"><img src="https://opencollective.com/nest/backers/badge.svg" alt="Backers on Open Collective" /></a>
-<a href="https://opencollective.com/nest#sponsor" target="_blank"><img src="https://opencollective.com/nest/sponsors/badge.svg" alt="Sponsors on Open Collective" /></a>
-  <a href="https://paypal.me/kamilmysliwiec" target="_blank"><img src="https://img.shields.io/badge/Donate-PayPal-ff3f59.svg" alt="Donate us"/></a>
-    <a href="https://opencollective.com/nest#sponsor"  target="_blank"><img src="https://img.shields.io/badge/Support%20us-Open%20Collective-41B883.svg" alt="Support us"></a>
-  <a href="https://twitter.com/nestframework" target="_blank"><img src="https://img.shields.io/twitter/follow/nestframework.svg?style=social&label=Follow" alt="Follow us on Twitter"></a>
-</p>
-  <!--[![Backers on Open Collective](https://opencollective.com/nest/backers/badge.svg)](https://opencollective.com/nest#backer)
-  [![Sponsors on Open Collective](https://opencollective.com/nest/sponsors/badge.svg)](https://opencollective.com/nest#sponsor)-->
+## Table of Contents
+
+- [Description](#description)
+- [Project Setup](#project-setup)
+- [Running the Application](#running-the-application)
+- [Running Tests](#running-tests)
+- [Environment Variables](#environment-variables)
+- [API Documentation](#api-documentation)
+- [Deployment](#deployment)
+- [Support](#support)
+- [License](#license)
 
 ## Description
 
-[Nest](https://github.com/nestjs/nest) framework TypeScript starter repository.
+The project is quite simple. One of the main requirements is to have a fast GET API to retrieve the price (also called premium).
 
-## Project setup
+First of all, I decided to embed PostgreSQL into a container so the project would be easier to test.
+I've created a branch (WIP) with a full Docker Compose approach: https://github.com/GuillaumeGSO/motor-insurance-pricing/tree/got_to_full_docker.
+
+### A few comments about the project:
+
+- The database contains one table, which is not optimal due to redundancy of product descriptions. Since the main API only returns premium:price, the product description could have been located in a separate table. However, this would have made the API to add/update/delete more complex.
+- I noticed that for the update route, we chose to use a query parameter for the productCode, but location is in the body. I've assumed that was a design choice.
+- The main search feature uses both product code and location, so the only required index is on these fields.
+- Separation of concerns: controllers only know about DTOs, services manage DTO to entity conversion, and the built-in repository from TypeORM handles database interactions.
+- The authentication service provides a JWT token that contains a role used to authorize routes.
+- Token handling and authorization are handled by middleware
+- Ensure it is fast: I used Artillery load testing to ensure that the API is fast and can handle heavy loads.
+- All services and controller are fully tested using Jest and mocking dependencies.
+  Note that config and modules files are excluded from the coverage calculation.
+- Middleware created to handle token validation and admin access.
+- Set up a logger (Nest).
+- Created an interceptor for error handling.
+
+Complementary approaches (not implemented):
+
+- NestJS built-in cache
+- Redis cache
+- PostgreSQL cache
+- Fastify for faster/compressed/http2 compatible (note that the project payloads are very light)
+- Horizontal scaling using a load balancer
+
+### Project requirements
+
+- All endpoints are documented in Swagger (annotations of controller methods).
+- All endpoints deal with DTOs, with validations using standard Nest class-validators.
+- The app contains one module (product) that includes product DTOs, entities, controllers, and services.
+- The app connects to a PostgreSQL container initiated during startup. It relies on TypeORM and uses a central .env configuration file.
+- Security:
+  - A token (classical `Authorization Bearer...`) must be set for all admin routes (other than GET).
+  - A role "admin" must be set in the `x-role` header.
+- A branch is created (WIP) with a deployment ready approach
+- API is able to handle a lot of concurrent access out of the box, see [load testing](#load-testing)
+- Unit test coverage is close to 100% with config and modules files excluded, see [unit testing](#test-coverage)
+
+## Technology Stack
+
+This project uses the following stack:
+
+- **Node.js**: A JavaScript runtime built on Chrome's V8 JavaScript engine, used for building scalable network applications.
+- **NestJS**: A progressive Node.js framework for building efficient, reliable, and scalable server-side applications.
+- **TypeScript**: A strongly typed programming language that builds on JavaScript, giving you better tooling at any scale.
+- **PostgreSQL**: A powerful, open-source object-relational database system.
+- **Docker**: A platform for developing, shipping, and running applications in containers.
+- **Jest**: A delightful JavaScript testing framework with a focus on simplicity.
+- **Swagger**: A tool for documenting APIs, used to generate the API documentation available at `/api`.
+- **Artillery**: A modern, powerful, and easy-to-use load testing toolkit.
+
+## Requirements
+
+Before setting up the project, ensure you have the following installed:
+
+- nodejs
+- npm
+- @nestjs/cli
+- docker
+- artillery (optional)
+
+## Project Setup
+
+To set up the project, follow these steps:
+
+1. Clone the repository:
+   ```bash
+   git clone https://github.com/GuillaumeGSO/motor-insurance-pricing.git
+   cd motor-insurance-pricing
+   ```
+2. Install the dependencies:
+   ```bash
+   npm install
+   ```
+3. Set up the environment variables by copying `.env.sample` to `.env` and filling in the required values:
+   ```bash
+   cp .env.sample .env
+   ```
+
+## Running the Application
+
+To run the application, use the following commands:
+
+### Development mode:
 
 ```bash
-$ npm install
+npm run start:dev:db
+npm run start:dev
 ```
 
-## Compile and run the project
+## Insert sample products / locations
 
 ```bash
-# development
-$ npm run start
-
-# watch mode
-$ npm run start:dev
-
-# production mode
-$ npm run start:prod
+npm run migration:run
 ```
 
-## Run tests
+## Running Tests
+
+To run the tests, use the following commands:
+
+### Unit tests:
 
 ```bash
-# unit tests
-$ npm run test
-
-# e2e tests
-$ npm run test:e2e
-
-# test coverage
-$ npm run test:cov
+npm run test
 ```
 
-## Deployment
-
-When you're ready to deploy your NestJS application to production, there are some key steps you can take to ensure it runs as efficiently as possible. Check out the [deployment documentation](https://docs.nestjs.com/deployment) for more information.
-
-If you are looking for a cloud-based platform to deploy your NestJS application, check out [Mau](https://mau.nestjs.com), our official platform for deploying NestJS applications on AWS. Mau makes deployment straightforward and fast, requiring just a few simple steps:
+### Test coverage:
 
 ```bash
-$ npm install -g mau
-$ mau deploy
+npm run test:cov
 ```
 
-With Mau, you can deploy your application in just a few clicks, allowing you to focus on building features rather than managing infrastructure.
+### Load testing
 
-## Resources
+Run the load test
 
-Check out a few resources that may come in handy when working with NestJS:
+```bash
+artillery run -o report-light.json test/load-test-light.yml
 
-- Visit the [NestJS Documentation](https://docs.nestjs.com) to learn more about the framework.
-- For questions and support, please visit our [Discord channel](https://discord.gg/G7Qnnhy).
-- To dive deeper and get more hands-on experience, check out our official video [courses](https://courses.nestjs.com/).
-- Deploy your application to AWS with the help of [NestJS Mau](https://mau.nestjs.com) in just a few clicks.
-- Visualize your application graph and interact with the NestJS application in real-time using [NestJS Devtools](https://devtools.nestjs.com).
-- Need help with your project (part-time to full-time)? Check out our official [enterprise support](https://enterprise.nestjs.com).
-- To stay in the loop and get updates, follow us on [X](https://x.com/nestframework) and [LinkedIn](https://linkedin.com/company/nestjs).
-- Looking for a job, or have a job to offer? Check out our official [Jobs board](https://jobs.nestjs.com).
+```
 
-## Support
+Generate the report
 
-Nest is an MIT-licensed open source project. It can grow thanks to the sponsors and support by the amazing backers. If you'd like to join them, please [read more here](https://docs.nestjs.com/support).
+```bash
+artillery run report report-light.json
+```
 
-## Stay in touch
+View report : open `report-light.json.html`
 
-- Author - [Kamil Myśliwiec](https://twitter.com/kammysliwiec)
-- Website - [https://nestjs.com](https://nestjs.com/)
-- Twitter - [@nestframework](https://twitter.com/nestframework)
+## Environment Variables
 
-## License
+The application uses the following environment variables:
 
-Nest is [MIT licensed](https://github.com/nestjs/nest/blob/master/LICENSE).
+- `POSTGRES_HOST`: The host of the PostgreSQL database.
+- `POSTGRES_PORT`: The port of the PostgreSQL database.
+- `POSTGRES_USER`: The username for the PostgreSQL database.
+- `POSTGRES_PASSWORD`: The password for the PostgreSQL database.
+- `POSTGRES_DATABASE`: The name of the PostgreSQL database.
+- `PORT`: The port on which the application will run.
+- `NODE_ENV`: The environment in which the application is running (e.g., DEV, PROD).
+- `RUN_MIGRATIONS`: Whether to run database migrations on startup.
+- `JWT_SECRET`: Key to encode JWT Token
+- `LOG_LEVELS`: The log levels for the application.
+
+## API Documentation
+
+The API documentation is available at `/api` when the application is running. It provides detailed information about the available endpoints and their usage.
+http://localhost:3000/api
+
+Note : you can use swagger interface to insert data into the DB.
+
+### API Call Examples
+
+In the `tools` folder, there is a Postman collection to use all the routes.
+
+#### Authenticate
+
+```bash
+curl -X POST http://localhost:3000/auth/login \
+-H "Content-Type: application/json" \
+-d '{"username": "admin", "password": "admin"}'
+```
+
+This provides a JWT token that needs to be used for all admin routes
+
+#### Create one product
+
+```bash
+curl -X POST http://localhost:3000/product \
+-H "Content-Type: application/json" \
+-H "Authorization: Bearer <your_token>" \
+-H "x-role: admin" \
+-d '{
+  "productCode": "1000",
+  "productDesc": "Sedan",
+  "location": "Malaysia",
+  "price": 300
+}'
+```
+
+#### Update one product
+
+```bash
+curl -X PUT http://localhost:3000/product?productCode=1000 \
+-H "Content-Type: application/json" \
+-H "Authorization: Bearer <your_token>" \
+-d '{
+  "productDesc": "Sedan 4WD",
+  "location": "Malaysia",
+  "price": 333
+}'
+```
+
+#### Delete one product
+
+```bash
+curl -X DELETE "http://localhost:3000/product?productCode=1000" \
+-H "Authorization: Bearer <your_token>" \
+```
+
+#### Get premium
+
+This is a public route, no authorization required
+
+```bash
+curl "http://localhost:3000/product?productCode=1000&location=Malaysia"
+```

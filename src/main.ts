@@ -1,10 +1,25 @@
-import { ValidationPipe } from '@nestjs/common';
+import { Logger, LogLevel, ValidationPipe } from '@nestjs/common';
 import { NestFactory } from '@nestjs/core';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import { AppModule } from './app.module';
+import { ErrorInterceptor } from './interceptors/error-interceptor';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
+
+  app.useGlobalInterceptors(new ErrorInterceptor());
+
+  const logLevels: LogLevel[] = (process.env.LOG_LEVELS || 'log,error,warn')
+    .split(',')
+    .filter((level) =>
+      ['log', 'error', 'warn', 'debug', 'verbose'].includes(level),
+    ) as LogLevel[];
+
+  const logger = new Logger('MotorPricing');
+  logger.log('Application is starting...');
+  logger.log(`Log levels set to: ${logLevels.join(', ')}`);
+  Logger.overrideLogger(logLevels);
+  app.useLogger(logLevels);
 
   app.useGlobalPipes(new ValidationPipe({ transform: true, whitelist: true }));
 

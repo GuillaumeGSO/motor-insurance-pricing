@@ -1,6 +1,6 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { Injectable, Logger, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { QueryFailedError, Repository } from 'typeorm';
 import {
   CreateProductDto,
   IProductDto,
@@ -16,6 +16,8 @@ export class ProductService {
     private readonly productRepository: Repository<ProductEntity>,
   ) {}
 
+  logger = new Logger(ProductService.name);
+
   async countProducts(): Promise<number> {
     return this.productRepository.count();
   }
@@ -28,10 +30,14 @@ export class ProductService {
         this.toEntity(createProductDto),
       );
       await this.productRepository.save(product);
+      this.logger.log(`Product created: ${product.productcode}`);
       return this.toDto(product);
     } catch (error) {
-      // TODO Handle specific database errors or log and rethrow
-      throw new Error('Error creating product: ' + error.message);
+      if (error instanceof QueryFailedError) {
+        throw new Error('Product already exists in the location.');
+      } else {
+        throw new Error('Error creating product: ' + error.message);
+      }
     }
   }
 

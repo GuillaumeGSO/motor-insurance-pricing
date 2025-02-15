@@ -1,9 +1,12 @@
+import { UnauthorizedException } from '@nestjs/common';
 import { Request, Response } from 'express';
+import * as jwt from 'jsonwebtoken';
 import { TokenValidationMiddleware } from '../../middleware/token-validation.middleware';
 
 describe('TokenValidationMiddleware', () => {
   let middleware: TokenValidationMiddleware;
   const validToken = 'valid_api_token';
+  let res;
 
   beforeAll(() => {
     process.env.API_TOKEN = validToken; // Mock environment variable
@@ -11,9 +14,10 @@ describe('TokenValidationMiddleware', () => {
 
   beforeEach(() => {
     middleware = new TokenValidationMiddleware();
+    res = {} as Response;
   });
 
-  it('should call next() if Authorization header has a valid Bearer token', () => {
+  it('should pass when token is valid for admin', () => {
     // Given
     const req = {
       headers: {
@@ -21,7 +25,7 @@ describe('TokenValidationMiddleware', () => {
       },
     } as Request;
 
-    const res = {} as Response;
+    jest.spyOn(jwt, 'verify').mockReturnValue({ roles: ['admin'] } as any);
 
     const next = jest.fn();
 
@@ -30,75 +34,107 @@ describe('TokenValidationMiddleware', () => {
 
     // Then
     expect(next).toHaveBeenCalled();
+    expect(req.headers.roles).toEqual(['admin']);
   });
 
-  it('should return 403 if Authorization header is missing', () => {
+  it('should pass when token is valid for user', () => {
+    const req = {
+      headers: {
+        authorization: `Bearer ${validToken}`,
+      },
+    } as Request;
+
+    jest.spyOn(jwt, 'verify').mockReturnValue({ roles: ['user'] } as any);
+
+    const next = jest.fn();
+
+    middleware.use(req, res, next);
+
+    expect(next).toHaveBeenCalled();
+    expect(req.headers.roles).toEqual(['user']);
+  });
+
+  it('should fail when Authorization header is missing', () => {
     const req = {
       headers: {},
     } as Request;
 
-    const res = {
-      status: jest.fn().mockReturnThis(),
-      json: jest.fn(),
-    } as unknown as Response;
-
     const next = jest.fn();
 
-    middleware.use(req, res, next);
+    try {
+      middleware.use(req, res, next);
+      fail('Should have thrown an error');
+    } catch (error) {
+      expect(error).toBeInstanceOf(UnauthorizedException);
+      expect(error.message).toBe('Authorization header is missing');
+    }
 
-    expect(res.status).toHaveBeenCalledWith(403);
-    expect(res.json).toHaveBeenCalledWith({
-      message: 'Invalid authorization header',
-    });
     expect(next).not.toHaveBeenCalled();
   });
 
-  it('should return 403 if Authorization header does not start with Bearer', () => {
+  it('should fail if token not found', () => {
     const req = {
       headers: {
-        authorization: 'Token abc123',
+        authorization: 'xxx',
       },
     } as Request;
 
-    const res = {
-      status: jest.fn().mockReturnThis(),
-      json: jest.fn(),
-    } as unknown as Response;
-
     const next = jest.fn();
 
-    middleware.use(req, res, next);
+    try {
+      middleware.use(req, res, next);
+      fail('Should have thrown an error');
+    } catch (error) {
+      expect(error).toBeInstanceOf(UnauthorizedException);
+      expect(error.message).toBe('Token not found');
+    }
 
-    expect(res.status).toHaveBeenCalledWith(403);
-    expect(res.json).toHaveBeenCalledWith({
-      message: 'Invalid authorization header',
-    });
     expect(next).not.toHaveBeenCalled();
   });
 
-  it('should return 403 if token is invalid', () => {
-    // Mock request, response, and next function
+  it('should fail if token is invalid', () => {
     const req = {
       headers: {
-        authorization: 'Bearer invalid_token',
+        authorization: 'Bearer any_token',
       },
     } as Request;
 
-    const res = {
-      status: jest.fn().mockReturnThis(),
-      json: jest.fn(),
-    } as unknown as Response;
+    const next = jest.fn();
+
+    jest.spyOn(jwt, 'verify').mockReturnValueOnce('invalid_token' as any);
+
+    try {
+      middleware.use(req, res, next);
+      fail('Should have thrown an error');
+    } catch (error) {
+      expect(error).toBeInstanceOf(UnauthorizedException);
+      expect(error.message).toBe('Invalid token payload');
+    }
+
+    expect(next).not.toHaveBeenCalled();
+  });
+
+  it('should fail if token is not verified', () => {
+    const req = {
+      headers: {
+        authorization: 'Bearer any_token',
+      },
+    } as Request;
 
     const next = jest.fn();
 
-    // Execute middleware
-    middleware.use(req, res, next);
-
-    // Assertions
-    expect(res.status).toHaveBeenCalledWith(403);
-    expect(res.json).toHaveBeenCalledWith({
-      message: 'Invalid token',
+    jest.spyOn(jwt, 'verify').mockImplementation(() => {
+      throw new Error('Token not verified');
     });
+
+    try {
+      middleware.use(req, res, next);
+      fail('Should have thrown an error');
+    } catch (error) {
+      expect(error).toBeInstanceOf(UnauthorizedException);
+      expect(error.message).toBe('Token not verified');
+    }
+
     expect(next).not.toHaveBeenCalled();
   });
 });

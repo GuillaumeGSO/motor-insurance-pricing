@@ -1,12 +1,15 @@
+import { CacheInterceptor } from '@nestjs/cache-manager';
 import {
   BadRequestException,
   Body,
   Controller,
   Delete,
   Get,
+  Logger,
   Post,
   Put,
   Query,
+  UseInterceptors,
 } from '@nestjs/common';
 import {
   ApiBody,
@@ -28,6 +31,8 @@ import { ProductService } from '../services/product.service';
 export class ProductController {
   constructor(private readonly productService: ProductService) {}
 
+  logger = new Logger(ProductController.name);
+
   @Get('count')
   async countProducts() {
     return this.productService.countProducts();
@@ -42,6 +47,7 @@ export class ProductController {
     type: PremiumResponseDto,
   })
   @Get()
+  @UseInterceptors(CacheInterceptor)
   async getPremium(@Query() query: PremiumQueryDto) {
     const { productCode, location } = query;
 
@@ -54,13 +60,8 @@ export class ProductController {
     if (!premium) {
       throw new BadRequestException('Product not found for given location');
     }
-    console.log(
-      'premium for product',
-      productCode,
-      'in location',
-      location,
-      'is',
-      premium,
+    this.logger.verbose(
+      `Premium for product ${productCode} at ${location} is ${premium.premium}`,
     );
     return premium;
   }
@@ -68,7 +69,16 @@ export class ProductController {
   @ApiBody({ type: CreateProductDto })
   @Post()
   async createProduct(@Body() createProductDto: CreateProductDto) {
-    return this.productService.createProduct(createProductDto);
+    this.logger.log(
+      `Creating new product:  ${createProductDto.productCode} at ${createProductDto.location}`,
+    );
+    try {
+      return await this.productService.createProduct(createProductDto);
+    } catch (error) {
+      throw new BadRequestException(
+        'Failed to create product: ' + error.message,
+      );
+    }
   }
 
   @ApiOperation({
