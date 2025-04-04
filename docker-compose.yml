@@ -1,7 +1,7 @@
 services:
   postgres_db:
     image: postgres:13-alpine
-    container_name: postgres_db
+    container_name: motor_insurance_db
     environment:
       POSTGRES_USER: ${POSTGRES_USER}
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
@@ -16,7 +16,7 @@ services:
     image: node:18-alpine
     container_name: motor_price_app
     environment:
-      - DATABASE_HOST=postgres_db
+      - DATABASE_HOST=motor_insurance_db
       - DATABASE_PORT=${POSTGRES_PORT}
       - DATABASE_USER=${POSTGRES_USER}
       - DATABASE_PASSWORD=${POSTGRES_PASSWORD}
