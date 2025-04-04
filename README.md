@@ -113,6 +113,7 @@ npm run start:dev
 
 ```bash
 npm run migration:run
+docker exec -it motor_price_app npm run migration:run
 ```
 
 ## Running Tests
