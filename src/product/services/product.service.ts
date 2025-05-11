@@ -18,6 +18,10 @@ export class ProductService {
 
   logger = new Logger(ProductService.name);
 
+  async countProducts(): Promise<number> {
+    return this.productRepository.count();
+  }
+
   async createProduct(
     createProductDto: CreateProductDto,
   ): Promise<IProductDto> {

@@ -105,14 +105,14 @@ To run the application, use the following commands:
 ### Development mode:
 
 ```bash
-npm run start:dev:db
-npm run start:dev
+docker compose up
 ```
 
 ## Insert sample products / locations
 
 ```bash
 npm run migration:run
+docker exec -it motor_price_app npm run migration:run
 ```
 
 ## Running Tests

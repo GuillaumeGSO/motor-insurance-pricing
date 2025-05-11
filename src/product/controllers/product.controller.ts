@@ -33,6 +33,11 @@ export class ProductController {
 
   logger = new Logger(ProductController.name);
 
+  @Get('count')
+  async countProducts() {
+    return this.productService.countProducts();
+  }
+
   @ApiOperation({ summary: 'Get premium by productCode and Location' })
   @ApiQuery({ name: 'productCode', description: 'Product code' })
   @ApiQuery({ name: 'location', description: 'Location' })
