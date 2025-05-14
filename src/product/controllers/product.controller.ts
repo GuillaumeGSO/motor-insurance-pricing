@@ -47,7 +47,13 @@ export class ProductController {
     type: PremiumResponseDto,
   })
   @Get()
+  @ApiOperation({ summary: 'Fetch premium from criterias' })
   @UseInterceptors(CacheInterceptor)
+  @ApiResponse({
+    status: 200,
+    description: 'Premium retrieved successfully',
+    type: PremiumResponseDto,
+  })
   async getPremium(@Query() query: PremiumQueryDto) {
     const { productCode, location } = query;
 
@@ -65,6 +71,34 @@ export class ProductController {
     );
     return premium;
   }
+
+  @Get('locations')
+  @ApiOperation({ summary: 'Get all distinct locations' })
+  // @UseInterceptors(CacheInterceptor)
+  @ApiResponse({
+    status: 200,
+    description: 'List of all locations',
+    type: String,
+    isArray: true,
+  })
+  async getAllLocations() {
+    return this.productService.getAllLocations();
+  }
+
+  @Get('productsForLocation')
+  @ApiOperation({ summary: 'Get all distinct products for a location' })
+  @ApiQuery({ name: 'location', description: 'Location', required: true })
+  // @UseInterceptors(CacheInterceptor)
+  @ApiResponse({
+    status: 200,
+    description: 'List of all products for specified location',
+    type: String,
+    isArray: true,
+  })
+  async getAllProducts(@Query('location') location: string) {
+    return this.productService.getAllProductsForLocation(location);
+  }
+
   @ApiOperation({ summary: 'Create new product into location' })
   @ApiBody({ type: CreateProductDto })
   @Post()

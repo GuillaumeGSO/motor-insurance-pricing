@@ -22,6 +22,31 @@ export class ProductService {
     return this.productRepository.count();
   }
 
+  async getAllLocations(): Promise<string[]> {
+    const locations = await this.productRepository
+      .createQueryBuilder('products')
+      .select('DISTINCT products.location')
+      .orderBy('products.location', 'ASC')
+      .getRawMany();
+
+    return locations.map((zone) => zone.location);
+  }
+
+  async getAllProductsForLocation(location: string): Promise<
+    { productCode: string; productDesc: string }[]
+  > {
+    const products = await this.productRepository
+      .createQueryBuilder('products')
+      .select('DISTINCT products.productcode, products.productdesc')
+      .where('products.location = :location', { location })
+      .orderBy('products.productdesc', 'ASC')
+      .getRawMany();
+
+    return products.map((product) => ({
+      productCode: product.productcode,
+      productDesc: product.productdesc,
+    }));
+  }
   async createProduct(
     createProductDto: CreateProductDto,
   ): Promise<IProductDto> {
@@ -76,7 +101,7 @@ export class ProductService {
     return this.toDto(updatedProduct);
   }
 
-  async deleteProduct(productCode: string): Promise<{ deleted: boolean }> {
+  async deleteProduct(productCode: string): Promise<{ productCode: string, deleted: boolean }> {
     const result = await this.productRepository.delete({
       productcode: productCode,
     });
@@ -85,7 +110,9 @@ export class ProductService {
         `Product with code ${productCode} not found.`,
       );
     }
-    return { deleted: true };
+    return { 
+      productCode: productCode,
+      deleted: true };
   }
 
   async findPriceByProductAndLocation(
