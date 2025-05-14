@@ -29,6 +29,8 @@ export class ProductModule implements NestModule {
       .apply(TokenValidationMiddleware, ProductAuthorizationMiddleware)
       .exclude({ path: 'product', method: RequestMethod.GET })
       .exclude({ path: 'product/count', method: RequestMethod.GET })
+      .exclude({ path: 'product/locations', method: RequestMethod.GET })
+      .exclude({ path: 'product/productsForLocation', method: RequestMethod.GET })
       .forRoutes(ProductController);
   }
 }
