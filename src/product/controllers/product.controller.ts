@@ -74,7 +74,6 @@ export class ProductController {
 
   @Get('locations')
   @ApiOperation({ summary: 'Get all distinct locations' })
-  // @UseInterceptors(CacheInterceptor)
   @ApiResponse({
     status: 200,
     description: 'List of all locations',
@@ -88,7 +87,6 @@ export class ProductController {
   @Get('productsForLocation')
   @ApiOperation({ summary: 'Get all distinct products for a location' })
   @ApiQuery({ name: 'location', description: 'Location', required: true })
-  // @UseInterceptors(CacheInterceptor)
   @ApiResponse({
     status: 200,
     description: 'List of all products for specified location',
