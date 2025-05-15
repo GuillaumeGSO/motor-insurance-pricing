@@ -1,3 +1,4 @@
+import { O } from '@faker-js/faker/dist/airline-BnpeTvY9';
 import { ApiProperty } from '@nestjs/swagger';
 import {
   IsNotEmpty,
@@ -30,42 +31,28 @@ export class CreateProductDto implements IProductDto {
   @IsNotEmpty()
   productCode: string;
 
-  @ApiProperty({ description: 'Product description', required: false })
-  @IsOptional()
-  @IsString()
-  productDesc?: string;
-
   @ApiProperty({ description: 'Location', required: true })
   @IsString()
   @IsNotEmpty()
   location: string;
 
-  @ApiProperty({ description: 'Price', required: true })
-  @IsNumber({ maxDecimalPlaces: 2 })
-  @IsPositive()
-  price: number;
-}
-
-export class UpdateProductDto implements IProductDto {
+  @ApiProperty({ description: 'Product description', required: false })
+  @IsOptional()
   @IsString()
-  @IsNotEmpty()
-  productCode: string;
+  productDesc?: string;
 
-  @IsString()
-  @IsNotEmpty()
-  location: string;
-
+  @ApiProperty({ description: 'Price', required: false })
   @IsOptional()
   @IsNumber({ maxDecimalPlaces: 2 })
   @IsPositive()
   price?: number;
-
-  @IsOptional()
-  @IsString()
-  productDesc?: string;
 }
 
-export class UpdateProductDetailsDto implements Partial<IProductDto> {
+export class UpdateProductDto extends CreateProductDto {
+
+}
+
+export class UpdateProductDetailsDto implements Omit<CreateProductDto, 'productCode'> {
   @ApiProperty({ description: 'Targeted Location', required: true })
   @IsString()
   @IsNotEmpty()
@@ -85,6 +72,6 @@ export class UpdateProductDetailsDto implements Partial<IProductDto> {
 export interface IProductDto {
   productCode: string;
   location: string;
-  price?: number;
   productDesc?: string;
+  price?: number;
 }

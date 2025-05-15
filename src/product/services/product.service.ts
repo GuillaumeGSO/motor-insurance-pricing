@@ -5,6 +5,7 @@ import {
   CreateProductDto,
   IProductDto,
   PremiumResponseDto,
+  UpdateProductDetailsDto,
   UpdateProductDto,
 } from '../dto/product.dto';
 import { ProductEntity } from '../entities/product.entity';
@@ -32,12 +33,14 @@ export class ProductService {
     return locations.map((zone) => zone.location);
   }
 
-  async getAllProductsForLocation(location: string): Promise<
-    { productCode: string; productDesc: string }[]
-  > {
+  async getAllProductsForLocation(
+    location: string,
+  ): Promise<IProductDto[]> {
     const products = await this.productRepository
       .createQueryBuilder('products')
-      .select('DISTINCT products.productcode, products.productdesc')
+      .select(
+        'DISTINCT products.productcode, products.productdesc, products.location',
+      )
       .where('products.location = :location', { location })
       .orderBy('products.productdesc', 'ASC')
       .getRawMany();
@@ -45,6 +48,7 @@ export class ProductService {
     return products.map((product) => ({
       productCode: product.productcode,
       productDesc: product.productdesc,
+      location: product.location
     }));
   }
   async createProduct(
@@ -84,8 +88,8 @@ export class ProductService {
 
     // Perform the update
     await this.productRepository.update(
-      { productcode: productCode, location },
-      this.toEntity(updateProductDto),
+      product.id,
+      this.toUpdateEntity(updateProductDto),
     );
 
     // Fetch the updated entity
@@ -94,6 +98,7 @@ export class ProductService {
       location,
     });
 
+    // Check if the product was updated successfully
     if (!updatedProduct) {
       throw new NotFoundException(`Failed to fetch the updated product.`);
     }
@@ -101,7 +106,9 @@ export class ProductService {
     return this.toDto(updatedProduct);
   }
 
-  async deleteProduct(productCode: string): Promise<{ productCode: string, deleted: boolean }> {
+  async deleteProduct(
+    productCode: string,
+  ): Promise<{ productCode: string; deleted: boolean }> {
     const result = await this.productRepository.delete({
       productcode: productCode,
     });
@@ -110,9 +117,10 @@ export class ProductService {
         `Product with code ${productCode} not found.`,
       );
     }
-    return { 
+    return {
       productCode: productCode,
-      deleted: true };
+      deleted: true,
+    };
   }
 
   async findPriceByProductAndLocation(
@@ -127,19 +135,33 @@ export class ProductService {
 
   //Can move that to a specific mapping service later
 
-  toEntity(dto: IProductDto): ProductEntity | null {
+  toEntity(dto: CreateProductDto ): ProductEntity | null {
     if (!dto) {
       return null;
     }
     return {
-      productcode: dto.productCode,
+      productcode: dto?.productCode,
       location: dto.location,
       productdesc: dto.productDesc,
       price: dto.price,
     } as ProductEntity;
   }
 
-  toDto(entity: ProductEntity): IProductDto {
+   toUpdateEntity(dto: UpdateProductDetailsDto ): ProductEntity | null {
+    if (!dto) {
+      return null;
+    }
+    return {
+      location: dto.location,
+      productdesc: dto.description,
+      price: dto.price,
+    } as ProductEntity;
+  }
+
+  toDto(entity: ProductEntity): CreateProductDto | null {
+    if (!entity) {
+      return null;
+    }
     return {
       productCode: entity.productcode,
       location: entity.location,
