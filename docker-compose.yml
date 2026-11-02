@@ -13,7 +13,7 @@ services:
     networks:
       - docker-network
   app:
-    image: node:18-alpine
+    image: node:24-alpine
     container_name: motor_price_app
     environment:
       - DATABASE_HOST=motor_insurance_db
