@@ -16,11 +16,11 @@ services:
     image: node:24-alpine
     container_name: motor_price_app
     environment:
-      - DATABASE_HOST=motor_insurance_db
-      - DATABASE_PORT=${POSTGRES_PORT}
-      - DATABASE_USER=${POSTGRES_USER}
-      - DATABASE_PASSWORD=${POSTGRES_PASSWORD}
-      - DATABASE_NAME=${POSTGRES_DATABASE}
+      - POSTGRES_HOST=motor_insurance_db
+      - POSTGRES_PORT=5432
+      - POSTGRES_USER=${POSTGRES_USER}
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
+      - POSTGRES_DATABASE=${POSTGRES_DATABASE}
     ports:
       - '3000:3000'
     volumes:

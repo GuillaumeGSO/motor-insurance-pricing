@@ -128,7 +128,10 @@ export class ProductService {
     const result = await this.productRepository.findOne({
       where: { productcode, location },
     });
-    return { premium: result?.price } as PremiumResponseDto;
+    if (!result) {
+      return undefined;
+    }
+    return { premium: result.price } as PremiumResponseDto;
   }
 
   //Can move that to a specific mapping service later

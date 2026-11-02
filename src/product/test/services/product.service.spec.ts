@@ -285,7 +285,7 @@ describe('ProductService', () => {
       expect(mockRepository.findOne).toHaveBeenCalledWith({
         where: { productcode: productCode, location },
       });
-      expect(result).toEqual({ premium: undefined });
+      expect(result).toBeUndefined();
     });
   });
 });
