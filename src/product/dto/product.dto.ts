@@ -47,11 +47,12 @@ export class CreateProductDto implements IProductDto {
   price?: number;
 }
 
-export class UpdateProductDto extends CreateProductDto {
+export class UpdateProductDto extends CreateProductDto {}
 
-}
-
-export class UpdateProductDetailsDto implements Omit<CreateProductDto, 'productCode'> {
+export class UpdateProductDetailsDto implements Omit<
+  CreateProductDto,
+  'productCode'
+> {
   @ApiProperty({ description: 'Targeted Location', required: true })
   @IsString()
   @IsNotEmpty()

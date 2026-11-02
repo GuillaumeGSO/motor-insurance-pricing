@@ -16,7 +16,7 @@ import { ProductService } from './services/product.service';
   imports: [
     TypeOrmModule.forFeature([ProductEntity]),
     CacheModule.register({
-      ttl: 10*1000,
+      ttl: 10 * 1000,
       max: 100,
     }),
   ],
@@ -30,7 +30,10 @@ export class ProductModule implements NestModule {
       .exclude({ path: 'product', method: RequestMethod.GET })
       .exclude({ path: 'product/count', method: RequestMethod.GET })
       .exclude({ path: 'product/locations', method: RequestMethod.GET })
-      .exclude({ path: 'product/productsForLocation', method: RequestMethod.GET })
+      .exclude({
+        path: 'product/productsForLocation',
+        method: RequestMethod.GET,
+      })
       .forRoutes(ProductController);
   }
 }

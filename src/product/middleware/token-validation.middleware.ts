@@ -3,7 +3,7 @@ import {
   NestMiddleware,
   UnauthorizedException,
 } from '@nestjs/common';
-import * as jwt from 'jsonwebtoken';
+import jwt from 'jsonwebtoken';
 
 import { NextFunction, Request, Response } from 'express';
 
@@ -30,8 +30,7 @@ export class TokenValidationMiddleware implements NestMiddleware {
       }
       next();
     } catch (error) {
-      throw new UnauthorizedException(error.message
-      );
+      throw new UnauthorizedException(error.message);
     }
   }
 }

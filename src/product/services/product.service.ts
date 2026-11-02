@@ -33,9 +33,7 @@ export class ProductService {
     return locations.map((zone) => zone.location);
   }
 
-  async getAllProductsForLocation(
-    location: string,
-  ): Promise<IProductDto[]> {
+  async getAllProductsForLocation(location: string): Promise<IProductDto[]> {
     const products = await this.productRepository
       .createQueryBuilder('products')
       .select(
@@ -48,7 +46,7 @@ export class ProductService {
     return products.map((product) => ({
       productCode: product.productcode,
       productDesc: product.productdesc,
-      location: product.location
+      location: product.location,
     }));
   }
   async createProduct(
@@ -135,7 +133,7 @@ export class ProductService {
 
   //Can move that to a specific mapping service later
 
-  toEntity(dto: CreateProductDto ): ProductEntity | null {
+  toEntity(dto: CreateProductDto): ProductEntity | null {
     if (!dto) {
       return null;
     }
@@ -147,7 +145,7 @@ export class ProductService {
     } as ProductEntity;
   }
 
-   toUpdateEntity(dto: UpdateProductDetailsDto ): ProductEntity | null {
+  toUpdateEntity(dto: UpdateProductDetailsDto): ProductEntity | null {
     if (!dto) {
       return null;
     }

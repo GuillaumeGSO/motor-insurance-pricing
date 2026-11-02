@@ -4,7 +4,6 @@ import {
   ExecutionContext,
   Injectable,
   InternalServerErrorException,
-  Logger,
   NestInterceptor,
 } from '@nestjs/common';
 import { Observable, throwError } from 'rxjs';

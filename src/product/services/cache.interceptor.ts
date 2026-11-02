@@ -21,10 +21,13 @@ export class LoggingCacheInterceptor extends CacheInterceptor {
     return cacheKey;
   }
 
-  async intercept(context: ExecutionContext, next: CallHandler): Promise<Observable<any>> {
+  async intercept(
+    context: ExecutionContext,
+    next: CallHandler,
+  ): Promise<Observable<any>> {
     const cacheKey = await this.trackBy(context);
     return (await super.intercept(context, next)).pipe(
-      tap((response) => {
+      tap(() => {
         if (cacheKey) {
           this.logger.log(`Cache hit for key: ${cacheKey}`);
         } else {

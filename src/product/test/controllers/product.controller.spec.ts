@@ -1,6 +1,7 @@
+import { CACHE_MANAGER } from '@nestjs/cache-manager';
 import { INestApplication } from '@nestjs/common';
 import { Test, TestingModule } from '@nestjs/testing';
-import * as request from 'supertest';
+import request from 'supertest';
 import { ProductController } from '../../controllers/product.controller';
 import {
   CreateProductDto,
@@ -26,6 +27,10 @@ describe('ProductController', () => {
             updateProduct: jest.fn(),
             deleteProduct: jest.fn(),
           },
+        },
+        {
+          provide: CACHE_MANAGER,
+          useValue: { get: jest.fn(), set: jest.fn() },
         },
       ],
     }).compile();
@@ -114,13 +119,13 @@ describe('ProductController', () => {
     const productCode = 'P001';
     jest
       .spyOn(productService, 'deleteProduct')
-      .mockResolvedValue({ deleted: true });
+      .mockResolvedValue({ productCode, deleted: true });
 
     const response = await request(app.getHttpServer())
       .delete('/product')
       .query({ productCode })
       .expect(200);
 
-    expect(response.body).toEqual({ deleted: true });
+    expect(response.body).toEqual({ productCode, deleted: true });
   });
 });

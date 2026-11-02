@@ -1,6 +1,6 @@
 import { UnauthorizedException } from '@nestjs/common';
 import { Request, Response } from 'express';
-import * as jwt from 'jsonwebtoken';
+import jwt from 'jsonwebtoken';
 import { TokenValidationMiddleware } from '../../middleware/token-validation.middleware';
 
 describe('TokenValidationMiddleware', () => {

@@ -49,7 +49,8 @@ describe('ProductService', () => {
         id: 1,
         productcode: createProductDto.productCode,
         productdesc: createProductDto.productDesc,
-        ...createProductDto,
+        location: createProductDto.location,
+        price: createProductDto.price,
       };
 
       const productDto: IProductDto = {
@@ -137,7 +138,7 @@ describe('ProductService', () => {
       mockRepository.findOneBy.mockResolvedValueOnce(existingProduct);
       mockRepository.findOneBy.mockResolvedValueOnce(updatedProduct);
       mockRepository.update.mockResolvedValue(undefined);
-      jest.spyOn(service, 'toEntity').mockReturnValue(updatedProduct);
+      jest.spyOn(service, 'toUpdateEntity').mockReturnValue(updatedProduct);
       jest.spyOn(service, 'toDto').mockReturnValue(updatedProductDto);
 
       // When
@@ -149,10 +150,10 @@ describe('ProductService', () => {
         location: 'Malaysia',
       });
       expect(mockRepository.update).toHaveBeenCalledWith(
-        { productcode: '1000', location: 'Malaysia' },
+        existingProduct.id,
         updatedProduct,
       );
-      expect(service.toEntity).toHaveBeenCalledWith(updateProductDto);
+      expect(service.toUpdateEntity).toHaveBeenCalledWith(updateProductDto);
       expect(service.toDto).toHaveBeenCalledWith(updatedProduct);
       expect(result).toEqual(updatedProductDto);
     });
@@ -220,7 +221,7 @@ describe('ProductService', () => {
       expect(mockRepository.delete).toHaveBeenCalledWith({
         productcode: productCode,
       });
-      expect(result).toEqual({ deleted: true });
+      expect(result).toEqual({ productCode, deleted: true });
     });
 
     it('should throw a NotFoundException if the product is not found', async () => {
