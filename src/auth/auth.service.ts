@@ -1,10 +1,10 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
-import { JwtModuleOptions, JwtService } from '@nestjs/jwt';
+import { JwtSignOptions, JwtService } from '@nestjs/jwt';
 import { Role, UserDto } from './auth.dto';
 
 @Injectable()
 export class AuthService {
-  jwtOptions: JwtModuleOptions;
+  jwtOptions: JwtSignOptions;
 
   //simulate user/role database that should be in its own service/repository
   users = [

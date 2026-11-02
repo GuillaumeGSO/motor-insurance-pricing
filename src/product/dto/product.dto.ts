@@ -1,4 +1,3 @@
-import { O } from '@faker-js/faker/dist/airline-BnpeTvY9';
 import { ApiProperty } from '@nestjs/swagger';
 import {
   IsNotEmpty,

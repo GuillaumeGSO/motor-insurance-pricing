@@ -13,8 +13,8 @@ import { tap } from 'rxjs/operators';
 export class LoggingCacheInterceptor extends CacheInterceptor {
   private readonly logger = new Logger(LoggingCacheInterceptor.name);
 
-  trackBy(context: ExecutionContext): string | undefined {
-    const cacheKey = super.trackBy(context);
+  async trackBy(context: ExecutionContext): Promise<string | undefined> {
+    const cacheKey = await super.trackBy(context);
     if (cacheKey) {
       this.logger.log(`Cache key: ${cacheKey}`);
     }
@@ -22,7 +22,7 @@ export class LoggingCacheInterceptor extends CacheInterceptor {
   }
 
   async intercept(context: ExecutionContext, next: CallHandler): Promise<Observable<any>> {
-    const cacheKey = this.trackBy(context);
+    const cacheKey = await this.trackBy(context);
     return (await super.intercept(context, next)).pipe(
       tap((response) => {
         if (cacheKey) {
